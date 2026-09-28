@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Simulador financeiro Oggi Fest</title>
+  <meta name="description" content="Simule o impacto do agente Oggi Fest na receita, no ticket médio e no ponto de equilíbrio da unidade.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2396377f'/%3E%3Ccircle cx='32' cy='32' r='18' fill='%23f8d61c'/%3E%3Cpath d='M21 32h22M32 21v22' stroke='%2396377f' stroke-width='7' stroke-linecap='round'/%3E%3C/svg%3E">
+  <style>
+    :root{--purple:#96377f;--purple-deep:#68245b;--orange:#f49b25;--yellow:#f8d61c;--blue:#4da2bd;--green:#208568;--ink:#2f2331;--muted:#716676;--line:#e7dce6;--paper:#fffaf1;--white:#fff;--soft:#f7eff6;--shadow:0 18px 50px rgba(75,35,69,.12)}
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:linear-gradient(145deg,#fff 0%,#fff9eb 65%,#f8edf6 100%);font-size:16px;line-height:1.45}
+    button,input{font:inherit} .page{min-height:100vh}.topbar{height:12px;background:linear-gradient(90deg,var(--purple) 0 48%,var(--orange) 48% 68%,var(--yellow) 68% 84%,var(--blue) 84%)}
+    header{max-width:1440px;margin:auto;padding:42px 44px 24px;display:flex;justify-content:space-between;gap:28px;align-items:flex-start}.eyebrow{margin:0 0 10px;font-size:.78rem;font-weight:850;letter-spacing:.16em;text-transform:uppercase;color:var(--purple)}h1{font-size:clamp(2.15rem,4vw,4.6rem);line-height:.98;max-width:820px;margin:0;letter-spacing:-.045em}header p{max-width:690px;color:var(--muted);font-size:1.05rem}.brand-lockup{display:flex;align-items:center;gap:18px}.brand{background:var(--purple);color:white;padding:14px 18px;border-radius:18px;font-weight:900;font-size:1.35rem;letter-spacing:-.05em;white-space:nowrap}.brand span{display:block;color:var(--yellow);font-size:.7rem;letter-spacing:.13em;text-align:center}.intelia-logo{width:150px;height:auto;display:block}
+    main{max-width:1440px;margin:auto;padding:0 44px 60px}.workspace{display:grid;grid-template-columns:minmax(360px,480px) minmax(0,1fr);gap:26px;align-items:start}.panel{background:rgba(255,255,255,.94);border:1px solid rgba(150,55,127,.14);border-radius:28px;box-shadow:var(--shadow)}.inputs{padding:28px;position:sticky;top:18px;max-height:calc(100vh - 36px);overflow-y:auto;scrollbar-color:var(--purple) #f1e9f0;scrollbar-width:thin}.panel h2{margin:0;font-size:1.35rem}.panel-intro{margin:5px 0 24px;color:var(--muted);font-size:.92rem}.section-title{margin:22px 0 12px;font-size:.73rem;font-weight:850;letter-spacing:.13em;color:var(--purple);text-transform:uppercase}.field{padding:14px 0;border-bottom:1px solid var(--line)}.field:last-of-type{border-bottom:0}.label-row{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:9px}.label-row label{font-weight:720;font-size:.93rem}.value-wrap{display:flex;align-items:center;border:1px solid var(--line);border-radius:11px;background:#fff;overflow:hidden;min-width:126px}.field[data-key="revenue"] .value-wrap{min-width:152px}.field[data-key="revenue"] .num{width:116px}.prefix,.suffix{padding:8px 8px;color:var(--muted);font-weight:700;background:#faf6fa}.num{width:92px;border:0;outline:0;text-align:right;padding:8px 6px;font-weight:800;color:var(--purple-deep);background:white}.range{width:100%;accent-color:var(--purple)}.hint{display:block;margin-top:5px;color:var(--muted);font-size:.76rem}.reset{width:100%;margin-top:20px;border:1px solid var(--purple);color:var(--purple);background:white;padding:11px 14px;border-radius:12px;font-weight:800;cursor:pointer}.reset:hover{background:var(--soft)}
+    .results{display:grid;gap:22px}.hero-results{background:var(--purple-deep);color:white;padding:26px;border-radius:28px;box-shadow:var(--shadow);overflow:hidden;position:relative}.hero-results:after{content:"";position:absolute;width:290px;height:290px;border-radius:50%;right:-120px;top:-150px;background:var(--yellow);opacity:.95}.hero-results h2,.hero-results p,.hero-results .kpi-grid{position:relative;z-index:1}.hero-results p{color:#eadde8;margin:5px 0 22px}.kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.kpi{padding:16px;border-radius:17px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15)}.kpi.emphasis{background:var(--yellow);color:var(--purple-deep)}.kpi-label{font-size:.76rem;font-weight:750;opacity:.8;min-height:34px}.kpi-value{font-size:clamp(1.2rem,1.75vw,1.65rem);font-weight:900;letter-spacing:-.04em;margin-top:3px;white-space:nowrap}.kpi-sub{font-size:.74rem;opacity:.78;margin-top:4px}.status-row{display:flex;gap:14px;align-items:center;margin-top:17px;padding:15px 17px;border-radius:15px;background:rgba(255,255,255,.09)}.status-dot{width:12px;height:12px;border-radius:50%;background:var(--green);box-shadow:0 0 0 5px rgba(32,133,104,.22)}.status-dot.negative{background:#ef788f;box-shadow:0 0 0 5px rgba(239,120,143,.2)}.status-text{font-weight:780}.status-detail{font-size:.83rem;color:#eadde8;margin-left:auto;text-align:right}
+    .metric-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}.metric-card{padding:23px}.metric-card h3{margin:0 0 18px;font-size:1rem}.metric-list{display:grid;gap:13px}.metric-line{display:flex;justify-content:space-between;gap:20px;padding-bottom:11px;border-bottom:1px solid var(--line)}.metric-line:last-child{border-bottom:0;padding-bottom:0}.metric-line span{color:var(--muted)}.metric-line strong{text-align:right}.delta-up{color:var(--green)}
+    .breakeven{padding:26px}.breakeven-head{display:flex;justify-content:space-between;gap:22px;align-items:flex-start}.breakeven-badge{background:var(--yellow);color:var(--purple-deep);padding:8px 12px;border-radius:999px;font-size:.78rem;font-weight:850}.thresholds{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}.threshold{background:var(--paper);border:1px solid #f2dfb5;border-radius:17px;padding:18px}.threshold small{display:block;color:var(--muted);min-height:38px}.threshold strong{display:block;font-size:1.45rem;margin-top:8px;color:var(--purple-deep)}.progress-wrap{margin-top:23px}.progress-labels{display:flex;justify-content:space-between;font-size:.82rem;font-weight:750}.track{height:14px;background:#ece4ec;border-radius:999px;overflow:hidden;margin:9px 0}.fill{height:100%;background:linear-gradient(90deg,var(--orange),var(--yellow),var(--green));width:0;transition:width .25s ease}.formula{margin-top:18px;padding:14px 16px;background:var(--soft);border-radius:14px;color:var(--muted);font-size:.82rem}.chart-card{padding:26px}.bars{display:grid;gap:18px;margin-top:22px}.bar-row{display:grid;grid-template-columns:150px 1fr 125px;gap:14px;align-items:center}.bar-label{font-weight:750}.bar-track{height:30px;background:#efe8ef;border-radius:9px;overflow:hidden}.bar{height:100%;border-radius:9px;min-width:3px;transition:width .25s ease}.bar.current{background:#d8c7d5}.bar.agent{background:linear-gradient(90deg,var(--purple),var(--orange))}.bar-value{text-align:right;font-weight:850}.assumption{font-size:.78rem;color:var(--muted);margin:18px 0 0}.disclaimer{font-size:.76rem;color:var(--muted);padding:0 4px}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    @media(max-width:1040px){.workspace{grid-template-columns:1fr}.inputs{position:static;max-height:none;overflow:visible}.kpi-grid{grid-template-columns:repeat(2,1fr)}.thresholds{grid-template-columns:1fr}.metric-grid{grid-template-columns:1fr}}
+    @media(max-width:680px){header,main{padding-left:18px;padding-right:18px}header{padding-top:26px}.brand-lockup{display:none}.inputs,.metric-card,.breakeven,.chart-card,.hero-results{border-radius:20px}.kpi-grid{grid-template-columns:1fr}.label-row{align-items:flex-start}.bar-row{grid-template-columns:1fr}.bar-value{text-align:left}.status-row{align-items:flex-start;flex-wrap:wrap}.status-detail{margin-left:26px;text-align:left}}
+  </style>
+</head>
+<body>
+<div class="page"><div class="topbar"></div>
+  <header>
+    <div><p class="eyebrow">Simulador financeiro · Oggi Fest</p><h1>Como o agente InteliA pode melhorar o desempenho da unidade?</h1><p>Edite as premissas para estimar receita incremental, evolução do ticket médio e o ponto de equilíbrio mensal do agente.</p></div>
+    <div class="brand-lockup"><div class="brand">oggi<span>SORVETES</span></div><img class="intelia-logo" src="intelia-logo-light.png" alt="InteliA"></div>
+  </header>
+  <main><div class="workspace">
+    <aside class="panel inputs">
+      <h2>Premissas da unidade</h2>
+      <div class="section-title">Operação atual</div>
+      <div class="field" data-key="revenue"><div class="label-row"><label for="revenue">Faturamento mensal da unidade</label><div class="value-wrap"><span class="prefix">R$</span><input class="num" id="revenue" value="500.000" inputmode="decimal"></div></div><input class="range" id="r_revenue" type="range" min="100000" max="3000000" step="10000" value="500000"></div>
+      <div class="field" data-key="overallTicket"><div class="label-row"><label for="overallTicket">Ticket médio atual da unidade</label><div class="value-wrap"><span class="prefix">R$</span><input class="num" id="overallTicket" value="15" inputmode="decimal"></div></div><input class="range" id="r_overallTicket" type="range" min="5" max="100" step="0.5" value="15"><span class="hint">O volume total de cupons é estimado a partir do faturamento e do ticket.</span></div>
+      <div class="field" data-key="festOrders"><div class="label-row"><label for="festOrders">Pedidos Oggi Fest por mês</label><div class="value-wrap"><input class="num" id="festOrders" value="10" inputmode="decimal"><span class="suffix">pedidos</span></div></div><input class="range" id="r_festOrders" type="range" min="0" max="100" step="1" value="10"></div>
+      <div class="field" data-key="festTicket"><div class="label-row"><label for="festTicket">Ticket médio atual do Oggi Fest</label><div class="value-wrap"><span class="prefix">R$</span><input class="num" id="festTicket" value="500" inputmode="decimal"></div></div><input class="range" id="r_festTicket" type="range" min="100" max="3000" step="25" value="500"></div>
+      <div class="field" data-key="margin"><div class="label-row"><label for="margin">Margem bruta média</label><div class="value-wrap"><input class="num" id="margin" value="60" inputmode="decimal"><span class="suffix">%</span></div></div><input class="range" id="r_margin" type="range" min="5" max="90" step="1" value="60"></div>
+      <div class="section-title">Impacto do agente</div>
+      <div class="field" data-key="volumeLift"><div class="label-row"><label for="volumeLift">Aumento no volume Oggi Fest</label><div class="value-wrap"><input class="num" id="volumeLift" value="50" inputmode="decimal"><span class="suffix">%</span></div></div><input class="range" id="r_volumeLift" type="range" min="0" max="200" step="1" value="50"><span class="hint">Benchmark inicial informado para o agente.</span></div>
+      <div class="field" data-key="ticketLift"><div class="label-row"><label for="ticketLift">Aumento no ticket médio Oggi Fest</label><div class="value-wrap"><input class="num" id="ticketLift" value="20" inputmode="decimal"><span class="suffix">%</span></div></div><input class="range" id="r_ticketLift" type="range" min="0" max="200" step="1" value="20"><span class="hint">Efeito esperado de dimensionamento, mix e kits superiores.</span></div>
+      <div class="field" data-key="agentCost"><div class="label-row"><label for="agentCost">Custo mensal do agente</label><div class="value-wrap"><span class="prefix">R$</span><input class="num" id="agentCost" value="1.200" inputmode="decimal"></div></div><input class="range" id="r_agentCost" type="range" min="0" max="20000" step="100" value="1200"></div>
+      <button class="reset" id="reset" type="button">Restaurar valores informados</button>
+    </aside>
+
+    <section class="results" aria-live="polite">
+      <div class="hero-results">
+        <h2>Impacto mensal estimado</h2><p>Comparação entre a operação atual e o cenário com o agente.</p>
+        <div class="kpi-grid">
+          <div class="kpi emphasis"><div class="kpi-label">Pedidos Oggi Fest por mês</div><div class="kpi-value" id="kFestOrdersCompare">0 → 0</div><div class="kpi-sub" id="kFestOrdersSub">+0% no volume</div></div>
+          <div class="kpi"><div class="kpi-label">Ticket médio da unidade</div><div class="kpi-value" id="kUnitTicketCompare">R$ 0 → R$ 0</div><div class="kpi-sub" id="kUnitTicketSub">+0% no ticket médio geral</div></div>
+          <div class="kpi"><div class="kpi-label">Receita mensal com Oggi</div><div class="kpi-value" id="kFestRevenueCompare">R$ 0 → R$ 0</div><div class="kpi-sub" id="kFestRevenueSub">receita Oggi Fest</div></div>
+        </div>
+        <div class="status-row"><span class="status-dot" id="statusDot"></span><span class="status-text" id="statusText">Ponto de equilíbrio atingido</span><span class="status-detail" id="statusDetail"></span></div>
+      </div>
+
+      <div class="metric-grid">
+        <div class="panel metric-card"><h3>Oggi Fest</h3><div class="metric-list">
+          <div class="metric-line"><span>Pedidos por mês</span><strong><span id="festOrdersNow">0</span> → <span class="delta-up" id="festOrdersNew">0</span></strong></div>
+          <div class="metric-line"><span>Ticket médio</span><strong><span id="festTicketNow">R$ 0</span> → <span class="delta-up" id="festTicketNew">R$ 0</span></strong></div>
+          <div class="metric-line"><span>Receita mensal</span><strong><span id="festRevenueNow">R$ 0</span> → <span class="delta-up" id="festRevenueNew">R$ 0</span></strong></div>
+        </div></div>
+        <div class="panel metric-card"><h3>Unidade como um todo</h3><div class="metric-list">
+          <div class="metric-line"><span>Ticket médio da unidade</span><strong><span id="overallTicketNow">R$ 0</span> → <span class="delta-up" id="overallTicketNew">R$ 0</span></strong></div>
+          <div class="metric-line"><span>Receita mensal da unidade</span><strong><span id="unitRevenueNow">R$ 0</span> → <span class="delta-up" id="unitRevenueNew">R$ 0</span></strong></div>
+          <div class="metric-line"><span>Aumento do ticket geral</span><strong class="delta-up" id="overallTicketLift">0%</strong></div>
+        </div></div>
+      </div>
+
+      <div class="panel breakeven">
+        <div class="breakeven-head"><div><h2>Ponto de equilíbrio do agente</h2></div><span class="breakeven-badge" id="coverageBadge">0% de ROI</span></div>
+        <div class="thresholds">
+          <div class="threshold"><small>Receita incremental mínima</small><strong id="beRevenue">R$ 0</strong></div>
+          <div class="threshold"><small>Receita incremental</small><strong id="incrementalRevenueThreshold">R$ 0</strong></div>
+          <div class="threshold"><small>Margem incremental bruta</small><strong id="grossIncrementalMargin">R$ 0</strong></div>
+        </div>
+        <div class="progress-wrap"><div class="progress-labels"><span>Retorno sobre o investimento</span><span id="coverageLabel">0%</span></div><div class="track"><div class="fill" id="coverageFill"></div></div></div>
+        <div class="formula">Ponto de equilíbrio = custo mensal do agente ÷ margem bruta. A comparação considera apenas o ganho sobre a receita atual do Oggi Fest.</div>
+      </div>
+
+      <div class="panel chart-card"><h2>Receita mensal comparada</h2><p class="panel-intro">A receita Oggi Fest cresce com volume e ticket. A receita total incorpora somente o valor incremental.</p>
+        <div class="bars">
+          <div class="bar-row"><span class="bar-label">Oggi Fest atual</span><div class="bar-track"><div class="bar current" id="barFestNow"></div></div><span class="bar-value" id="barFestNowValue"></span></div>
+          <div class="bar-row"><span class="bar-label">Oggi Fest com agente</span><div class="bar-track"><div class="bar agent" id="barFestNew"></div></div><span class="bar-value" id="barFestNewValue"></span></div>
+        </div>
+        <p class="assumption" id="insight"></p>
+      </div>
+      <p class="disclaimer">Simulação indicativa baseada nas premissas informadas. Não representa garantia de desempenho. Os benchmarks devem ser substituídos pelos dados reais do piloto assim que estiverem disponíveis.</p>
+    </section>
+  </div></main>
+</div>
+<script>
+  const defaults={revenue:500000,overallTicket:15,festOrders:10,festTicket:500,margin:60,volumeLift:50,ticketLift:20,agentCost:1200};
+  const ids=Object.keys(defaults); const state={...defaults};
+  const brl=new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0});
+  const brl2=new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL',minimumFractionDigits:2,maximumFractionDigits:2});
+  const num=new Intl.NumberFormat('pt-BR',{maximumFractionDigits:1});
+  const editableInteger=new Intl.NumberFormat('pt-BR',{maximumFractionDigits:0});
+  const editableDecimal=new Intl.NumberFormat('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:2});
+  const integerKeys=new Set(['revenue','festOrders','festTicket','agentCost']);
+  const pct=v=>`${num.format(v)}%`; const clamp=(v,min,max)=>Math.min(max,Math.max(min,v));
+  function parse(v){const clean=String(v).replace(/\s/g,'').replace(/\./g,'').replace(',','.').replace(/[^0-9.-]/g,'');return Number(clean)||0}
+  function formatEditable(key,value){return (integerKeys.has(key)?editableInteger:editableDecimal).format(value)}
+  function sync(key,value,source){state[key]=Math.max(0,value);const input=document.getElementById(key),range=document.getElementById('r_'+key);if(source!=='input')input.value=formatEditable(key,state[key]);if(source!=='range')range.value=clamp(state[key],Number(range.min),Number(range.max));calculate()}
+  ids.forEach(key=>{const input=document.getElementById(key);input.addEventListener('input',e=>sync(key,parse(e.target.value),'input'));input.addEventListener('blur',()=>input.value=formatEditable(key,state[key]));document.getElementById('r_'+key).addEventListener('input',e=>sync(key,Number(e.target.value),'range'));});
+  document.getElementById('reset').addEventListener('click',()=>ids.forEach(k=>{state[k]=defaults[k];document.getElementById(k).value=formatEditable(k,defaults[k]);document.getElementById('r_'+k).value=defaults[k];})||calculate());
+  function calculate(){
+    const margin=state.margin/100,vol=state.volumeLift/100,tLift=state.ticketLift/100;
+    const currentOrders=state.overallTicket>0?state.revenue/state.overallTicket:0;
+    const festRevNow=state.festOrders*state.festTicket;
+    const festOrdersNew=state.festOrders*(1+vol);
+    const festTicketNew=state.festTicket*(1+tLift);
+    const festRevNew=festOrdersNew*festTicketNew;
+    const incremental=festRevNew-festRevNow;
+    const newRevenue=state.revenue+incremental;
+    const newTotalOrders=currentOrders+(festOrdersNew-state.festOrders);
+    const newOverallTicket=newTotalOrders>0?newRevenue/newTotalOrders:0;
+    const overallTicketLift=state.overallTicket>0?(newOverallTicket/state.overallTicket-1)*100:0;
+    const incrementalMargin=incremental*margin;
+    const net=incrementalMargin-state.agentCost;
+    const beRevenue=margin>0?state.agentCost/margin:Infinity;
+    const roi=state.agentCost>0?net/state.agentCost*100:(net>=0?100:0);
+    const set=(id,value)=>document.getElementById(id).textContent=value;
+    set('kFestOrdersCompare',`${num.format(state.festOrders)} → ${num.format(festOrdersNew)}`);set('kFestOrdersSub',`${state.volumeLift>=0?'+':''}${pct(state.volumeLift)} no volume`);set('kUnitTicketCompare',`${brl2.format(state.overallTicket)} → ${brl2.format(newOverallTicket)}`);set('kUnitTicketSub',`${overallTicketLift>=0?'+':''}${pct(overallTicketLift)} no ticket médio geral`);set('kFestRevenueCompare',`${brl.format(festRevNow)} → ${brl.format(festRevNew)}`);set('kFestRevenueSub',`${brl.format(incremental)} de receita incremental`);
+    const positive=net>=0; document.getElementById('statusDot').classList.toggle('negative',!positive);set('statusText',positive?'Ponto de equilíbrio atingido':'Ponto de equilíbrio ainda não atingido');set('statusDetail',positive?`${brl.format(net)} de resultado mensal após o agente`:`Faltam ${brl.format(Math.abs(net))} de margem para cobrir o agente`);
+    set('festOrdersNow',num.format(state.festOrders));set('festOrdersNew',num.format(festOrdersNew));set('festTicketNow',brl.format(state.festTicket));set('festTicketNew',brl.format(festTicketNew));set('festRevenueNow',brl.format(festRevNow));set('festRevenueNew',brl.format(festRevNew));set('overallTicketNow',brl2.format(state.overallTicket));set('overallTicketNew',brl2.format(newOverallTicket));set('unitRevenueNow',brl.format(state.revenue));set('unitRevenueNew',brl.format(newRevenue));set('overallTicketLift',`${overallTicketLift>=0?'+':''}${pct(overallTicketLift)}`);
+    set('beRevenue',Number.isFinite(beRevenue)?brl.format(beRevenue):'Margem zero');set('incrementalRevenueThreshold',brl.format(incremental));set('grossIncrementalMargin',brl.format(incrementalMargin));set('coverageBadge',`${pct(roi)} de ROI`);set('coverageLabel',pct(roi));document.getElementById('coverageFill').style.width=`${clamp(roi,0,100)}%`;
+    const max=Math.max(festRevNow,festRevNew,1);document.getElementById('barFestNow').style.width=`${festRevNow/max*100}%`;document.getElementById('barFestNew').style.width=`${festRevNew/max*100}%`;set('barFestNowValue',brl.format(festRevNow));set('barFestNewValue',brl.format(festRevNew));
+    set('insight',`Com ${pct(state.volumeLift)} de aumento no volume e ${pct(state.ticketLift)} no ticket Oggi Fest, a receita da modalidade passa de ${brl.format(festRevNow)} para ${brl.format(festRevNew)} por mês. A margem incremental estimada é ${brl.format(incrementalMargin)} antes do custo do agente.`);
+  }
+  ids.forEach(key=>{document.getElementById(key).value=formatEditable(key,state[key]);document.getElementById('r_'+key).value=state[key]});
+  calculate();
+</script>
+</body></html>
